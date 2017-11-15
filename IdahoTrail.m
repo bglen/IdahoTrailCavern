@@ -16,7 +16,8 @@ waitfor(f1)
 
 f = figure('Name','Map');
 Player = imread('Player.bmp');
-Ogre = imread('Player.bmp');
+Ogre = imread('Ogre.bmp');
+Bandit = imread('Bandit.bmp');
 %Char= [Level EXP Vitality Strength Dexterity]
 Char=[1 0 1 1 1];
 Level=Char(1);
@@ -25,38 +26,56 @@ Vitality=Char(3);
 Strength=Char(4);
 Dexterity=Char(5);
 Hero_Health=90+10*Vitality;
+
 running = 1;
+worldCount = 1;
 posY = 1;
 posX = 1;
+
+%draw initial world
 World{1,1}= Player;
 for k=1:2
-World{randi(9)+1,randi(9)+1}= Monster;
+World{randi(9)+1,randi(9)+1}= Bandit;
 World{randi(9)+1,randi(9)+1}= Ogre;
 end
 World{10,10}=Door;
+
+%show inital world
 imshow([World{1,:};World{2,:};World{3,:};World{4,:};World{5,:};World{6,:};World{7,:};World{8,:};World{9,:};World{10,:};]);
 
 
-for k= 1:40
+while running == 1
 h = figure(1);
 waitforbuttonpress;
 switch get(h, 'CurrentKey')
     case 'rightarrow'
-        World{posY,posX} = Blank;
-        posX = posX + 1;
+        if (posX + 1) <= 10
+            World{posY,posX} = Blank;
+            posX = posX + 1;
+        end
     case 'downarrow'
-        World{posY,posX} = Blank;
-        posY = posY + 1;
+        if (posY + 1) <= 10
+            World{posY,posX} = Blank;
+            posY = posY + 1;
+        end
     case 'uparrow'
-        World{posY,posX} = Blank;
-        posY = posY - 1;
-    case 'leftarrow'
-        World{posY,posX} = Blank;
-        posX = posX - 1;
+        if (posY - 1) >= 1
+            World{posY,posX} = Blank;
+            posY = posY - 1;
+        end
+    case'leftarrow'
+        if (posX - 1) >= 1
+            World{posY,posX} = Blank;
+            posX = posX - 1;
+        end
+    case 'p'
+        f3 = Pause;
+        waitfor(f3);
 end
+
 if World{posY,posX} == Blank
     World{posY,posX} = Player;
-elseif World{posY,posX} == Monster
+elseif World{posY,posX} == Bandit
     [r] = BanditBattle(Strength,Dexterity,Hero_Health);
     Hero_Health=r;
     World{posY,posX} = Player;
@@ -67,11 +86,22 @@ elseif World{posY,posX} == Ogre
     EXP=EXP+3;
     World{posY,posX} = Player;
 elseif World{posY,posX} == Door
-    delete(f)
-    fprintf('You Win!\n')
-    break
-%     pause(song1)
-    clear
+    fprintf('Next Level!\n')
+    for x = 1:10
+        for y = 1:10
+            World{x, y} = Blank;
+        end
+    end
+    
+    World{1, 1} = Player;
+    posX = 1;
+    posY = 1;
+    worldCount = worldCount + 1;
+    for k=1:(4 * worldCount)
+        World{randi(9)+1,randi(9)+1}= Bandit;
+        World{randi(9)+1,randi(9)+1}= Ogre;
+    end
+    World{10,10}=Door;
 end
 
 World{posY,posX} = Player;
