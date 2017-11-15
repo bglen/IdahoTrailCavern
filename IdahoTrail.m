@@ -18,6 +18,7 @@ f = figure('Name','Map');
 Player = imread('Player.bmp');
 Ogre = imread('Ogre.bmp');
 Bandit = imread('Bandit.bmp');
+SuperCola = imread('SuperCola.bmp');
 %Char= [Level EXP Vitality Strength Dexterity]
 Char=[1 0 1 1 1];
 Level=Char(1);
@@ -37,14 +38,17 @@ World{1,1}= Player;
 for k=1:2
 World{randi(9)+1,randi(9)+1}= Bandit;
 World{randi(9)+1,randi(9)+1}= Ogre;
+World{randi(9)+1,randi(9)+1}= SuperCola;
 end
 World{10,10}=Door;
 
 %show inital world
 imshow([World{1,:};World{2,:};World{3,:};World{4,:};World{5,:};World{6,:};World{7,:};World{8,:};World{9,:};World{10,:};]);
 
-
+%MAIN LOOP
 while running == 1
+
+%Check for Keyboard input
 h = figure(1);
 waitforbuttonpress;
 switch get(h, 'CurrentKey')
@@ -73,6 +77,7 @@ switch get(h, 'CurrentKey')
         waitfor(f3);
 end
 
+%Interact with object in the world
 if World{posY,posX} == Blank
     World{posY,posX} = Player;
 elseif World{posY,posX} == Bandit
@@ -85,14 +90,18 @@ elseif World{posY,posX} == Ogre
     Hero_Health= d;
     EXP=EXP+3;
     World{posY,posX} = Player;
+elseif World{posY,posX} == SuperCola
+    EXP = EXP + (.5 * worldCount);
 elseif World{posY,posX} == Door
     fprintf('Next Level!\n')
+    %clear the level
     for x = 1:10
         for y = 1:10
             World{x, y} = Blank;
         end
     end
     
+    %place new objects in the world
     World{1, 1} = Player;
     posX = 1;
     posY = 1;
@@ -100,13 +109,17 @@ elseif World{posY,posX} == Door
     for k=1:(4 * worldCount)
         World{randi(9)+1,randi(9)+1}= Bandit;
         World{randi(9)+1,randi(9)+1}= Ogre;
+        World{randi(9)+1,randi(9)+1}= SuperCola;
     end
     World{10,10}=Door;
 end
 
+%display the world
 World{posY,posX} = Player;
 imshow([World{1,:};World{2,:};World{3,:};World{4,:};World{5,:};World{6,:};World{7,:};World{8,:};World{9,:};World{10,:};]);
-    if (EXP >= 15) && (Level == 6)
+
+%adjust stats for player
+if (EXP >= 15) && (Level == 6)
         %Char= [Level EXP Vitality Strength Dexterity];
         Char(2)=EXP-15;
         Char(1)=7;
