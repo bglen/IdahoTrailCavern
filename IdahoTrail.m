@@ -18,7 +18,11 @@ f = figure('Name','Map');
 Player = imread('Player.bmp');
 Ogre = imread('Ogre.bmp');
 Bandit = imread('Bandit.bmp');
-SuperCola = imread('SuperCola.bmp');
+SuperCola = imread('tea.bmp');
+dUL = imread('dragon_upleft.bmp');
+dUR = imread('dragon_upright.bmp');
+dDR = imread('dragon_downright.bmp');
+dDL = imread('dragon_downleft.bmp');
 %Char= [Level EXP Vitality Strength Dexterity]
 Char=[1 0 1 1 1];
 Level=Char(1);
@@ -35,6 +39,11 @@ posX = 1;
 
 %draw initial world
 World{1,1}= Player;
+
+World{7, 7} = dUL;
+World{7, 8} = dUR;
+World{8, 7} = dDL;
+World{8, 8} = dDR;
 for k=1:2
 World{randi(9)+1,randi(9)+1}= Bandit;
 World{randi(9)+1,randi(9)+1}= Ogre;
@@ -185,6 +194,6 @@ if (EXP >= 15) && (Level == 6)
     end
 
 end
-% pause(song1)
+ pause(song1)
 clear
 
